@@ -1,0 +1,9 @@
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\bin\Debug\netcoreapp3.1\WeatherSystemLogic.deps.json
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\bin\Debug\netcoreapp3.1\WeatherSystemLogic.dll
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\bin\Debug\netcoreapp3.1\WeatherSystemLogic.pdb
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.csprojAssemblyReference.cache
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.AssemblyInfoInputs.cache
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.AssemblyInfo.cs
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.csproj.CoreCompileInputs.cache
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.dll
+D:\Programiranje\OOP\Domaca_zadaca1\WeatherSystem\obj\Debug\netcoreapp3.1\WeatherSystemLogic.pdb
