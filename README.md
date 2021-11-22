@@ -1,3 +1,92 @@
+# Zadaća 2 - Ključna riječ static, operatori i korisne klase
+
+## Zadatak
+
+U sustav za rad s informacijama o vremenskim prilikama trebate dodati klasu koja predstavlja vremensku prognozu za određeni dan. Vremenska prognoza sadržava informacije o datumu na koji se odnosi (struktura DateTime) te referencu na objekt tipa Weather iz Zadaće 1. Također je potrebno dodati klasu koja predstavlja tjednu prognozu sa stanjem za čuvanje sedam dnevnih vremenskih prognoza u obliku polja. Implementirajte sve potrebne klase, njihove metode, kao i pomoćne statičke metode unutar klase "ForecastUtilities" kako bi se testni program u nastavku mogao ispravno izvesti (u klasu ForecastUtilities premjestite i metodu za pronalazak vremena s najvećim osjetom hladnoće vjetra iz zadaće 1). 
+
+## Dodatne upute i materijali
+
+* Kod usporedbe pri traženju vremena s najvećom temperaturom koristiti odgovarajući preopterećeni relacijski operator (uspoređuje se prema temperaturi).
+* Kod bilo kakvog ispisa osloniti se na metodu "GetAsString()". Nikako ne trebate ispisivati bilo što iz klasa koje predstavljaju dio rješenja problema.
+* Konzola se smije rabiti isključivo unutar testnog programa, unutar ConsoleWeatherUI projekta.
+* Možete pretpostaviti da će ulazna datoteka biti ispravno formatirana i sadržavati sedam unosa.
+
+## Pravila
+
+* Koristiti programski jezik je C#.
+* Svaka klasa ide u zasebnu datoteku imena jednakog kao i klasa
+* Kreirati dva projekta unutar solutiona, jedan koji će biti definiran kao *class library* i u kojem će biti logika rješenja, a drugi koji će biti konzolna aplikacija i koji će predstavljati UI.
+* Koristiti .NET Core projekte u VS-u.
+* Uploadati rješenje na Github, na privatni repozitorij.
+* Zalijepiti link na repozitorij na odgovarajuće mjesto na Merlinu za predaju zadaće.
+* Nakon isteka roka za zadaću učiniti repozitorij javnim kako bi mogao biti ocijenjen.
+* Prepisivanje je strogo zabranjeno i bit će kažnjavano (i za izvor i za prepisivača!).
+
+## Testni program
+
+```c#
+private static void RunDemoForHW2()
+{
+    DateTime monday = new DateTime(2021, 11, 8);
+    Weather mondayWeather = new Weather(6.17, 56.13, 4.9);
+    DailyForecast mondayForecast = new DailyForecast(monday, mondayWeather);
+    Console.WriteLine(monday.ToString());
+    Console.WriteLine(mondayWeather.GetAsString());
+    Console.WriteLine(mondayForecast.GetAsString());
+
+    // Assume a valid input file (correct format).
+    // Assume that the number of rows in the text file is always 7. 
+    string fileName = "weather.forecast";
+    if (File.Exists(fileName) == false)
+    {
+        Console.WriteLine("The required file does not exist. Please create it, or change the path.");
+        return;
+    }
+
+    string[] dailyWeatherInputs = File.ReadAllLines(fileName);
+    DailyForecast[] dailyForecasts = new DailyForecast[dailyWeatherInputs.Length];
+    for (int i = 0; i < dailyForecasts.Length; i++)
+    {
+        dailyForecasts[i] = ForecastUtilities.Parse(dailyWeatherInputs[i]);
+    }
+    WeeklyForecast weeklyForecast = new WeeklyForecast(dailyForecasts);
+    Console.WriteLine(weeklyForecast.GetAsString());
+    Console.WriteLine("Maximal weekly temperature:");
+    Console.WriteLine(weeklyForecast.GetMaxTemperature());
+    Console.WriteLine(weeklyForecast[0].GetAsString());
+}	
+```
+
+## Primjer ulazne datoteke
+```
+08/11/2021 00:00:00,6.17,46.50,4.9
+09/11/2021 00:00:00,4.37,58.00,4.1
+10/11/2021 00:00:00,8.45,56.03,1.9
+11/11/2021 00:00:00,9.03,53.55,0.8
+12/11/2021 00:00:00,3.14,42.33,6.1
+13/11/2021 00:00:00,3.78,43.11,0.2
+14/11/2021 00:00:00,5.22,42.22,0.3
+```
+
+## Primjer izlaza
+```
+08/11/2021 00:00:00
+T=6.17°C, w=4.9km/h, h=56.13%
+08/11/2021 00:00:00: T=6.17°C, w=4.9km/h, h=56.13%
+08/11/2021 00:00:00: T=6.17°C, w=46.5km/h, h=4.9%
+09/11/2021 00:00:00: T=4.37°C, w=58km/h, h=4.1%
+10/11/2021 00:00:00: T=8.45°C, w=56.03km/h, h=1.9%
+11/11/2021 00:00:00: T=9.03°C, w=53.55km/h, h=0.8%
+12/11/2021 00:00:00: T=3.14°C, w=42.33km/h, h=6.1%
+13/11/2021 00:00:00: T=3.78°C, w=43.11km/h, h=0.2%
+14/11/2021 00:00:00: T=5.22°C, w=42.22km/h, h=0.3%
+
+Maximal weekly temperature:
+9.03
+08/11/2021 00:00:00: T=6.17°C, w=46.5km/h, h=4.9%
+```
+
+
 # Zadaća 1 - Osnove OOP
 
 ## Zadatak
