@@ -13,6 +13,11 @@ namespace WeatherSystemLogic
             this.dailyForecasts = dailyForecasts;
         }
 
+        public DailyForecast this[int wordIndex]
+        {
+            get { return dailyForecasts[wordIndex]; }
+        }
+
         public string GetAsString()
         {
             string message = "";
