@@ -13,9 +13,9 @@ namespace WeatherSystemLogic
             this.dailyForecasts = dailyForecasts;
         }
 
-        public DailyForecast this[int wordIndex]
+        public DailyForecast this[int index]
         {
-            get { return dailyForecasts[wordIndex]; }
+            get { return dailyForecasts[index]; }
         }
 
         public string GetAsString()
