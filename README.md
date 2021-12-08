@@ -1,3 +1,112 @@
+# Zadaća 3 - Odnosi i polimorfizam
+
+## Zadatak
+
+U sustav za rad s informacijama o vremenskim prilikama trebate dodati klasu za generiranje vremenskih prilika (generiranje instanci klase *Weather*). Ta nova klasa definira raspone vrijednosti unutar kojih će biti postavljane vrijednosti atributa novostvorenih (generiranih) vremenskih prilika, generator pseudoslučajnih vrijednosti te metodu za generiranje vremenskih prilika.
+
+Generator pseudoslučajnih vrijednosti treba biti predstavljen sučeljem *IRandomGenerator* koje ćete sami definirati, a ono sadrži metodu koja omogućuje generiranje realne vrijednosti unutar raspona zadanog predanim argumentima. Definirajte dva različita konkretna tipa generatora pseudoslučajnih vrijednosti. Prvi treba generirati vrijednosti unutar zadanog raspona prema uniformnoj razdiobi. Drugi predstavlja pristrani generator. Kod pristranog generatora, dvostruko je veća vjerojatnost generiranja vrijednosti u donjoj polovini raspona vrijednosti u odnosu na one iz gornje polovine (vidjeti dodatne upute). 
+ 
+Također,  potrebno je omogućiti ispis sadržaja u aplikaciji korištenjem sučelja *IPrinter* s dvije konkretne implementacije, konzolnom i datotečnom. Konzolnoj se inačici može zadati i naknadno izmijeniti boja teksta, dok se datotečnoj može zadati i naknadno izmijeniti datoteka u koju će zapisivati. 
+
+Implementirajte sve potrebne klase i njihove metode kako bi se testni program u nastavku mogao ispravno izvesti. 
+
+## Dodatne upute i materijali
+
+* [Uniformna razdioba](https://mathworld.wolfram.com/UniformDistribution.html).
+* [Kompozicija i labave veze](https://martinfowler.com/ieeeSoftware/coupling.pdf).
+* Sve pojave metoda GetAsString() zamijenite pozivima odgovarajućim preopterećenim metodama ToString().
+* Unutar vlastitih konkretnih generatora možete koristiti instancu Random klase.
+* Gornja granica ne uključuje se kod generiranja. Ovo je samo da Vam olakša život ako koristite klasu *Random* čija metoda *NextDouble()* omogućuje generiranje pseudoslučajne vrijednosti u rasponu *0.0&le;r<1.0*.
+* Ako je *Tmin=0*, a *Tmax=10*, tada će vjerojatnost generiranja vrijednosti *t<5* biti dvostruko veća u odnosu na *5&le;t<10*.
+* Izlaz je formatiran tako da prikazuje očekivani izlaz s konzole i treba promatrati prikaz izlaza, a ne izvornu .md datoteku koja sadržava i html oznake.
+* Metoda *PrintWeathers* ispisuje sve vremenske prilike na sve dostupne pisače.
+
+## Pravila
+
+* Koristiti programski jezik C#.
+* Svaka klasa ide u zasebnu datoteku imena jednakog kao i klasa.
+* Kreirati dva projekta unutar solutiona, jedan koji će biti definiran kao *class library* i u kojem će biti logika rješenja, a drugi koji će biti konzolna aplikacija i koji će predstavljati UI.
+* Koristiti .NET Core projekte u VS-u.
+* Uploadati rješenje na Github, na privatni repozitorij.
+* Zalijepiti link na repozitorij na odgovarajuće mjesto na Merlinu za predaju zadaće.
+* Nakon isteka roka za zadaću učiniti repozitorij javnim kako bi mogao biti ocijenjen.
+* Prepisivanje je strogo zabranjeno i bit će kažnjavano (i za izvor i za prepisivača!).
+
+## Testni program
+
+```c#
+private static void RunDemoForHW3()
+{
+    const int weatherCount = 10;
+    double minTemperature = -25.00, maxTemperature = 43.00;
+    double minHumidity = 0.00, maxHumidity = 100.00;
+    double minWindSpeed = 0.00, maxWindSpeed = 10.00;
+    Random generator = new Random();
+
+    IRandomGenerator randomGenerator = new UniformGenerator(generator);
+    WeatherGenerator weatherGenerator = new WeatherGenerator(
+        minTemperature, maxTemperature,
+        minHumidity, maxHumidity,
+        minWindSpeed, maxWindSpeed,
+        randomGenerator
+    );
+
+    Weather[] uniformWeathers = new Weather[weatherCount];
+    for (int i = 0; i < uniformWeathers.Length; i++)
+    {
+        uniformWeathers[i] = weatherGenerator.Generate();
+    }
+
+    randomGenerator = new BiasedGenerator(generator);
+    weatherGenerator.SetGenerator(randomGenerator);
+    Weather[] winterWeathers = new Weather[weatherCount];
+    for (int i = 0; i < winterWeathers.Length; i++)
+    {
+        winterWeathers[i] = weatherGenerator.Generate();
+    }            
+
+    IPrinter[] uniformPrinters = new IPrinter[]
+    {
+        new ConsolePrinter(ConsoleColor.DarkYellow),
+        new FilePrinter(@"uniformWeathers.txt"),
+    };	
+    ForecastUtilities.PrintWeathers(uniformPrinters, uniformWeathers);
+
+    IPrinter[] winterPrinters = new IPrinter[]
+    {
+        new ConsolePrinter(ConsoleColor.Green),
+        new FilePrinter(@"winterWeathers.txt"),
+    };
+    ForecastUtilities.PrintWeathers(winterPrinters, winterWeathers);
+}	
+```
+
+## Primjer izlaza
+
+<span style="color:gold">
+T=34.407072087473736°C, w=0.7242330027391357km/h, h=21.260308903297553%<br/>
+T=8.348959385114235°C, w=5.741071643187232km/h, h=5.8444830150550615%<br/>
+T=34.36940613359651°C, w=0.0366215501151148km/h, h=60.5831262472007%<br/>
+T=-23.121934087072468°C, w=4.2098772778221765km/h, h=9.09385509281133%<br/>
+T=22.721952622626887°C, w=2.075417783146453km/h, h=83.3377609417484%<br/>
+T=-15.066170620762822°C, w=9.6834317779557km/h, h=19.34217727712457%<br/>
+T=-12.24434554914215°C, w=6.475176804920276km/h, h=59.52898085095406%<br/>
+T=26.33234551704132°C, w=4.058234097463188km/h, h=94.19013024037244%<br/>
+T=-11.689332447335744°C, w=0.6188617463311468km/h, h=0.9697876875148097<br/>
+T=37.487946042086904°C, w=5.903676932632774km/h, h=9.749426231602872%<br/>
+</span><span style="color:green">
+T=-2.5841465804652053°C, w=1.8678344748298796km/h, h=87.79237875146437%<br/>
+T=39.16203646183109°C, w=2.610613826015319km/h, h=65.4507674348777%<br/>
+T=15.793718503226396°C, w=2.65027532011749km/h, h=94.9463532282721%<br/>
+T=32.91354864366052°C, w=7.542470103382352km/h, h=87.83233602895976%<br/>
+T=-23.977097658895467°C, w=1.4734038112095573km/h, h=13.535089331462554<br/>
+T=26.415513649310693°C, w=1.8416440495483783km/h, h=25.41685000779892%<br/>
+T=31.61476519359963°C, w=1.294835033498162km/h, h=72.9905357225754%<br/>
+T=-2.5828538106674586°C, w=2.7753609198962153km/h, h=3.6583521653238464<br/>
+T=-7.7655242638501925°C, w=1.0780035849092546km/h, h=73.98214064258251%<br/>
+T=37.34651307125879°C, w=3.4500459271716166km/h, h=76.45463593139064%<br/>
+</span>
+
 # Zadaća 2 - Ključna riječ static, operatori i korisne klase
 
 ## Zadatak
