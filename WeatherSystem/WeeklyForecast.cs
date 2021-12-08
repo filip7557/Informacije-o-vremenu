@@ -18,12 +18,12 @@ namespace WeatherSystemLogic
             get { return dailyForecasts[index]; }
         }
 
-        public string GetAsString()
+        public override string ToString()
         {
             string message = "";
             foreach (var dailyForecast in dailyForecasts)
             {
-                message += dailyForecast.GetAsString() + '\n';
+                message += dailyForecast.ToString() + '\n';
             }
             return message;
         }

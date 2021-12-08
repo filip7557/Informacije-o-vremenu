@@ -29,5 +29,14 @@ namespace WeatherSystemLogic
             }
             return largestWindchill;
         }
+
+        public static void PrintWeathers(IPrinter[] printers, Weather[] weathers)
+        {
+            foreach (var printer in printers)
+                foreach(var weather in weathers)
+                {
+                    printer.PrintWeather(weather);
+                }
+        }
     }
 }

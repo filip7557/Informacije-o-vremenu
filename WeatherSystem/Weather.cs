@@ -75,7 +75,7 @@ namespace WeatherSystemLogic
             return 13.12 + 0.6215 * this.currentTemperature - 11.37 * Math.Pow(this.windSpeed, 0.16) + 0.3965 * Math.Pow(this.windSpeed, 0.16);
         }
 
-        public string GetAsString()
+        public override string ToString()
         {
             return $"T={GetTemperature()}°C, w={GetWindSpeed()}km/h, h={GetHumidity()}%";
         }

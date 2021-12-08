@@ -15,9 +15,9 @@ namespace WeatherSystemLogic
             this.weather = weather;
         }
 
-        public string GetAsString()
+        public override string ToString()
         {
-            return $"{date.ToString("dd/MM/yyyy HH:mm:ss", null)}: {weather.GetAsString()}";
+            return $"{date.ToString("dd/MM/yyyy HH:mm:ss", null)}: {weather}";
         }
 
         public double Temperature { get { return weather.GetTemperature(); } }
