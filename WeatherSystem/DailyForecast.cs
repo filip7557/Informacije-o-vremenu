@@ -20,7 +20,9 @@ namespace WeatherSystemLogic
             return $"{date.ToString("dd/MM/yyyy HH:mm:ss", null)}: {weather}";
         }
 
+        public Weather Weather { get { return weather; } set { weather = value; } }
         public double Temperature { get { return weather.GetTemperature(); } }
+        public DateTime Date {  get { return date; } }
 
         public static bool operator >(DailyForecast left, DailyForecast right)
         {
