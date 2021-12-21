@@ -1,3 +1,152 @@
+# Zadaća 4 - Iznimke, Generičke klase
+
+## Zadatak
+
+Definirajte klasu koja omogućuje pohranu dnevnih vremenskih prognoza za proizvoljan broj dana (klasa *DailyForecastRepository*). Omogućite:
+* dodavanje novih prognoza za pojedinačne dane
+* dodavanje cijele liste prognoza
+* uklanjanje prognoza po datumu
+* izravno iteriranje po prognozi uporabom petlje *foreach*
+* duboko kopiranje uporabom odgovarajućeg konstruktora
+
+Implementirajte sve potrebne klase i njihove metode kako bi se testni program u nastavku mogao ispravno izvesti.
+
+## Dodatne upute i materijali
+
+* Dnevne prognoze unutar objekta u svakom su trenutku sortirane uzlazno prema datumu.
+* U slučaju da se pokuša dodati prognoza za datum (uzeti u obzir samo datume, ne gledati vrijeme) koji je već prisutan, potrebno je postojeću zamijeniti novom prognozom.
+* U slučaju da kod brisanja ne postoji niti jedna prognoza, potrebno je podići iznimku vlastitog tipa izvedenog iz klase *System.Exception* koja će čuvati i omogućiti pristup datumu koji je doveo do iznimke.
+
+## Pravila
+
+* Koristiti programski jezik C#.
+* Svaka klasa ide u zasebnu datoteku imena jednakog kao i klasa.
+* Kreirati dva projekta unutar solutiona, jedan koji će biti definiran kao *class library* i u kojem će biti logika rješenja, a drugi koji će biti konzolna aplikacija i koji će predstavljati UI.
+* Koristiti .NET Core projekte u VS-u.
+* Uploadati rješenje na Github, na privatni repozitorij.
+* Zalijepiti link na repozitorij na odgovarajuće mjesto na Merlinu za predaju zadaće.
+* Nakon isteka roka za zadaću učiniti repozitorij javnim kako bi mogao biti ocijenjen.
+* Prepisivanje je strogo zabranjeno i bit će kažnjavano (i za izvor i za prepisivača!).
+
+## Testni program
+
+```c#
+private static void RunDemoForHW4()
+{
+    double minTemperature = -25.00, maxTemperature = 43.00;
+    double minHumidity = 0.0, maxHumidity = 100.00;
+    double minWindSpeed = 0.00, maxWindSpeed = 10.00;
+    IRandomGenerator randomGenerator = new UniformGenerator(new Random());
+    WeatherGenerator weatherGenerator = new WeatherGenerator(
+        minTemperature, maxTemperature,
+        minHumidity, maxHumidity,
+        minWindSpeed, maxWindSpeed,
+        randomGenerator
+    );
+
+    // Creating the repository and adding items.
+    DailyForecastRepository repository = new DailyForecastRepository();
+    repository.Add(new DailyForecast(DateTime.Now, weatherGenerator.Generate()));
+    repository.Add(new DailyForecast(DateTime.Now.AddDays(1), weatherGenerator.Generate()));
+    repository.Add(new DailyForecast(DateTime.Now.AddDays(2), weatherGenerator.Generate()));
+    Console.WriteLine($"Current state of repository:{Environment.NewLine}{repository}");
+
+    // Adding a new forecast for the same day should replace the old one:
+    repository.Add(new DailyForecast(DateTime.Now.AddHours(2), weatherGenerator.Generate()));
+    Console.WriteLine($"Current state of repository:{Environment.NewLine}{repository}");
+    
+    // Adding multiple forecasts, the ones for existing days should replace the old ones:
+    List<DailyForecast> forecasts = new List<DailyForecast>() {
+        new DailyForecast(DateTime.Now.AddDays(2), weatherGenerator.Generate()),
+        new DailyForecast(DateTime.Now.AddDays(3), weatherGenerator.Generate()),
+        new DailyForecast(DateTime.Now.AddDays(4), weatherGenerator.Generate()),
+    };
+    repository.Add(forecasts);
+    Console.WriteLine($"Current state of repository:{Environment.NewLine}{repository}");
+
+    // Removing forecasts based on date:
+    try
+    {
+        repository.Remove(DateTime.Now);
+        repository.Remove(DateTime.Now.AddDays(100));
+    }
+    catch (NoSuchDailyWeatherException exception) 
+    {
+        Console.WriteLine(exception.Message);
+    }
+    Console.WriteLine($"Current state of repository:{Environment.NewLine}{repository}");
+
+    // Iterating over a custom object:
+    Console.WriteLine("Temperatures:");
+    foreach (DailyForecast dailyForecast in repository)
+    {
+        Console.WriteLine($"-> {dailyForecast.Weather.GetTemperature()}");
+    }
+
+    // Deep clone:
+    DailyForecastRepository copy = new DailyForecastRepository(repository);
+    Console.WriteLine($"Original repository:{Environment.NewLine}{repository}");
+    Console.WriteLine($"Cloned repository:{Environment.NewLine}{copy}");
+    
+    DailyForecast forecastToAdd = new DailyForecast(DateTime.Now, new Weather(-2.0, 47.12, 2.1));
+    copy.Add(forecastToAdd);
+    
+    Console.WriteLine($"Original repository:{Environment.NewLine}{repository}");
+    Console.WriteLine($"Cloned repository:{Environment.NewLine}{copy}");
+}
+```
+
+## Primjer izlaza
+
+```
+Current state of repository:
+10.12.2021. 12:02:41: T=-2.449213920835973°C, w=2.967170687842728km/h, h=93.82930434952922%
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=-22.406719079896213°C, w=9.561407258529872km/h, h=73.79925664225559%
+Current state of repository:
+10.12.2021. 14:02:41: T=-19.968777814399814°C, w=5.392248679600772km/h, h=1.1538550728717143%
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=-22.406719079896213°C, w=9.561407258529872km/h, h=73.79925664225559%
+Current state of repository:
+10.12.2021. 14:02:41: T=-19.968777814399814°C, w=5.392248679600772km/h, h=1.1538550728717143%
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+No daily forecast for 20.3.2022. 0:00:00
+Current state of repository:
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+Temperatures:
+-> 35.455357905689326
+-> 18.107616548942218
+-> 36.478731279018675
+-> -3.4348463259799615
+Original repository:
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+Cloned repository:
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+Original repository:
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+Cloned repository:
+10.12.2021. 12:02:41: T=-2°C, w=2.1km/h, h=47.12%
+11.12.2021. 12:02:41: T=35.455357905689326°C, w=6.927796735860313km/h, h=13.351009792346048%
+12.12.2021. 12:02:41: T=18.107616548942218°C, w=1.087208972818781km/h, h=93.31162436553818%
+13.12.2021. 12:02:41: T=36.478731279018675°C, w=6.7183022372044165km/h, h=45.56707131935613%
+14.12.2021. 12:02:41: T=-3.4348463259799615°C, w=0.6839242254774665km/h, h=41.59626864902501%
+```
+
 # Zadaća 3 - Odnosi i polimorfizam
 
 ## Zadatak
